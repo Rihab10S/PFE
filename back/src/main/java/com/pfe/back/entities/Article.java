@@ -2,13 +2,17 @@ package com.pfe.back.entities;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
@@ -41,12 +45,23 @@ public class Article {
     @Column(name = "fournisseur")
     private String fournisseur;
 
-    // Constructeur par défaut 
-    public Article() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "stock_principal_id")
+    @JsonBackReference
+    @JsonIgnore
+    private StockPrincipal stockPrincipal; // Relation avec StockPrincipal
 
-    // Constructeur avec tous les champs sauf l'ID
-    public Article(String nom, String description, double prixUnitaire, int quantiteDisponible, Date dateExpiration, String reference, String fournisseur) {
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "sub_stock_id")
+    private SubStock subStock; // Relation avec SousStock (si l'article est transféré)
+
+    // Constructeur par défaut
+    public Article() {}
+
+    // Constructeur avec paramètres pour créer un nouvel Article
+    public Article(String nom, String description, Double prixUnitaire, int quantiteDisponible, 
+                   Date dateExpiration, String reference, String fournisseur, StockPrincipal stockPrincipal, SubStock subStock) {
         this.nom = nom;
         this.description = description;
         this.prixUnitaire = prixUnitaire;
@@ -54,10 +69,26 @@ public class Article {
         this.dateExpiration = dateExpiration;
         this.reference = reference;
         this.fournisseur = fournisseur;
+        this.stockPrincipal = stockPrincipal;
+        this.subStock = subStock;
     }
 
+    public Article(String nom, String description, Double prixUnitaire, int quantiteDisponible, 
+               Date dateExpiration, String reference, String fournisseur, Integer stockPrincipalId, Integer subStockId) {
+    this.nom = nom;
+    this.description = description;
+    this.prixUnitaire = prixUnitaire;
+    this.quantiteDisponible = quantiteDisponible;
+    this.dateExpiration = dateExpiration;
+    this.reference = reference;
+    this.fournisseur = fournisseur;
+    this.stockPrincipal = stockPrincipalId != null ? new StockPrincipal() : null;
+    this.subStock = subStockId != null ? new SubStock() : null;
+}
+
     // Constructeur avec ID (utile pour récupérer un article existant)
-    public Article(Long id, String nom, String description, double prixUnitaire, int quantiteDisponible, Date dateExpiration, String reference, String fournisseur) {
+    public Article(long id, String nom, String description, Double prixUnitaire, int quantiteDisponible,
+                   Date dateExpiration, String reference, String fournisseur, StockPrincipal stockPrincipal, SubStock subStock) {
         this.id = id;
         this.nom = nom;
         this.description = description;
@@ -66,6 +97,8 @@ public class Article {
         this.dateExpiration = dateExpiration;
         this.reference = reference;
         this.fournisseur = fournisseur;
+        this.stockPrincipal = stockPrincipal;
+        this.subStock = subStock;
     }
 
     // Getters et Setters
@@ -131,5 +164,21 @@ public class Article {
 
     public void setFournisseur(String fournisseur) {
         this.fournisseur = fournisseur;
+    }
+
+    public StockPrincipal getStockPrincipal() {
+        return stockPrincipal;
+    }
+
+    public void setStockPrincipal(StockPrincipal stockPrincipal) {
+        this.stockPrincipal = stockPrincipal;
+    }
+
+    public SubStock getSubStock() {
+        return subStock;
+    }
+
+    public void setSubStock(SubStock subStock) {
+        this.subStock = subStock;
     }
 }
