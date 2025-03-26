@@ -11,6 +11,8 @@ import com.pfe.back.Repositories.SubStockRepository;
 import com.pfe.back.entities.Article;
 import com.pfe.back.entities.SubStock;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class SubStockService {
 
@@ -21,7 +23,7 @@ public class SubStockService {
     public SubStock createSubStock(SubStock subStock) {
         return subStockRepository.save(subStock);
     }
-
+    @Transactional
     // Obtenir un SubStock par son ID
     public Optional<SubStock> getSubStockById(Long id) {
         return subStockRepository.findById(id);

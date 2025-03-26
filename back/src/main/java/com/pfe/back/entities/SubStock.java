@@ -29,6 +29,7 @@ public class SubStock {
     private StockPrincipal stockPrincipal;// Relation avec StockPrincipal
 
     @OneToMany(mappedBy = "subStock")  
+    @JsonIgnore 
     private List<Article> articles;// Articles transférés du Stock Principal vers le Sous Stock
     // Constructeurs
     public SubStock() {}
