@@ -8,21 +8,30 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.pfe.back.Services.ArticleService;
-import com.pfe.back.Services.StockPrincipalService;
-import com.pfe.back.Services.SubStockService;
 import com.pfe.back.entities.Article;
-import com.pfe.back.entities.StockPrincipal;
-import com.pfe.back.entities.SubStock;
 
 @RestController
 @RequestMapping("/api/articles")
@@ -210,17 +219,17 @@ public ResponseEntity<String> importArticlesFromExcel(@RequestParam("file") Mult
         }
 
         // Récupérer les objets StockPrincipal et SubStock s'ils existent
-        StockPrincipal stockPrincipal = (stockPrincipalId != null) ?
-            StockPrincipalService.findById(stockPrincipalId).orElse(null) : null;
+        //StockPrincipal stockPrincipal = (stockPrincipalId != null) ?
+            //StockPrincipalService.findById(stockPrincipalId).orElse(null) : null;
 
-        SubStock subStock = (sousStockId != null) ?
-            SubStockService.findById(sousStockId).orElse(null) : null;
+        //SubStock subStock = (sousStockId != null) ?
+           // SubStockService.findById(sousStockId).orElse(null) : null;
 
         // Création de l'article avec gestion des relations
-        Article article = new Article(nom, description, prixUnitaire, quantiteDisponible, dateExpiration, reference, fournisseur, stockPrincipal, subStock);
+       // Article article = new Article(nom, description, prixUnitaire, quantiteDisponible, dateExpiration, reference, fournisseur, stockPrincipal, subStock);
 
         // Enregistrer l'article dans la base de données
-        articleService.saveArticle(article);
+       // articleService.saveArticle(article);
     }
 
     workbook.close();
