@@ -52,4 +52,8 @@ public class SubStockService {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findById'");
     }
+    public SubStock getSubStockByNom(String nom) {
+        return subStockRepository.findByNomSousStock(nom).orElse(null);
+    }
+    
 }

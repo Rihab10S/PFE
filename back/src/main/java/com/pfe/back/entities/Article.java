@@ -181,4 +181,6 @@ public class Article {
     public void setSubStock(SubStock subStock) {
         this.subStock = subStock;
     }
+
+  
 }

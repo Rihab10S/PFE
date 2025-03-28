@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,13 +32,23 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.pfe.back.Services.ArticleService;
+import com.pfe.back.Services.StockPrincipalService;
+import com.pfe.back.Services.SubStockService;
 import com.pfe.back.entities.Article;
+import com.pfe.back.entities.StockPrincipal;
+import com.pfe.back.entities.SubStock;
 
 @RestController
 @RequestMapping("/api/articles")
 public class ArticleController {
 
     private final ArticleService articleService;
+
+    @Autowired
+    private StockPrincipalService stockPrincipalService;
+
+    @Autowired
+    private SubStockService subStockService;
 
     public ArticleController(ArticleService articleService) {
         this.articleService = articleService;
@@ -146,7 +157,7 @@ public class ArticleController {
         
             row.createCell(5).setCellValue(article.getReference()); 
             row.createCell(6).setCellValue(article.getFournisseur()); 
-            row.createCell(7).setCellValue(article.getStockPrincipal().getNom());
+            row.createCell(7).setCellValue(article.getStockPrincipal() != null ? article.getStockPrincipal().getNom() : "N/A");
             row.createCell(8).setCellValue(article.getSubStock() != null ? article.getSubStock().getNomSousStock() : "N/A");
         }
     
@@ -206,7 +217,18 @@ public ResponseEntity<String> importArticlesFromExcel(@RequestParam("file") Mult
             }
         }
 
-        Integer sousStockId = tryParseInt(sousStockStr); // Sous-stock peut être vide
+        // === Nouveau traitement du sous-stock ===
+        SubStock subStock = null;
+        if (!sousStockStr.isEmpty() && !"N/A".equalsIgnoreCase(sousStockStr)) {
+            subStock = subStockService.getSubStockByNom(sousStockStr);
+            if (subStock == null) {
+                continue; // Si sous-stock introuvable, ignorer la ligne (ou tu peux lever une exception)
+            }
+
+        }
+
+        StockPrincipal stockPrincipal = (stockPrincipalId != null) ?
+            stockPrincipalService.getStockPrincipalById(stockPrincipalId.longValue()).orElse(null) : null;
 
         // Vérification des données obligatoires
         if (nom.isEmpty() || description.isEmpty()) {
@@ -218,18 +240,11 @@ public ResponseEntity<String> importArticlesFromExcel(@RequestParam("file") Mult
             continue;
         }
 
-        // Récupérer les objets StockPrincipal et SubStock s'ils existent
-        //StockPrincipal stockPrincipal = (stockPrincipalId != null) ?
-            //StockPrincipalService.findById(stockPrincipalId).orElse(null) : null;
-
-        //SubStock subStock = (sousStockId != null) ?
-           // SubStockService.findById(sousStockId).orElse(null) : null;
-
         // Création de l'article avec gestion des relations
-       // Article article = new Article(nom, description, prixUnitaire, quantiteDisponible, dateExpiration, reference, fournisseur, stockPrincipal, subStock);
+        Article article = new Article(nom, description, prixUnitaire, quantiteDisponible, dateExpiration, reference, fournisseur, stockPrincipal, subStock);
 
         // Enregistrer l'article dans la base de données
-       // articleService.saveArticle(article);
+        articleService.saveArticle(article);
     }
 
     workbook.close();
