@@ -6,7 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pfe.back.Repositories.ArticleRepository;
+import com.pfe.back.Repositories.ArticleSousStockRepository;
 import com.pfe.back.Repositories.MissionRepository;
+import com.pfe.back.entities.Article;
+import com.pfe.back.entities.ArticleMission;
+import com.pfe.back.entities.ArticleSousStock;
 import com.pfe.back.entities.Mission;
 
 import jakarta.transaction.Transactional;
@@ -16,7 +20,8 @@ public class MissionService {
 
     @Autowired
     private MissionRepository missionRepository;
-
+    @Autowired
+    private ArticleSousStockRepository articleSousStockRepository;
     @Autowired
     private ArticleRepository articleRepository;
 
@@ -61,4 +66,40 @@ public class MissionService {
         Mission mission = getMissionById(id);
         missionRepository.delete(mission);
     }
-}
+
+    @Transactional
+    public void validerMission(Long missionId) {
+        Mission mission = missionRepository.findById(missionId)
+                .orElseThrow(() -> new RuntimeException("Mission introuvable"));
+
+        if (!mission.getStatut().equalsIgnoreCase("valider")) {
+            mission.setStatut("valider");
+
+            // Parcourir les articles liés à la mission
+            for (ArticleMission articleMission : mission.getArticles()) {
+                Article article = articleMission.getArticle();
+
+                // Chercher l'articleSousStock correspondant (par id)
+                ArticleSousStock sousStock = articleSousStockRepository
+                        .findById(article.getId())
+                        .orElseThrow(() -> new RuntimeException("Article sous-stock non trouvé"));
+
+                // Diminuer la quantité
+                int nouvelleQuantite = sousStock.getQuantiteDisponibleSousStock() - articleMission.getQuantite();
+
+                if (nouvelleQuantite < 0) {
+                    throw new RuntimeException("Quantité insuffisante pour l'article " + sousStock.getNom());
+                }
+
+                sousStock.setQuantiteDisponibleSousStock(nouvelleQuantite);
+                articleSousStockRepository.save(sousStock);
+            }
+
+            // Sauvegarder la mission validée
+            missionRepository.save(mission);
+        } else {
+            throw new RuntimeException("Mission déjà validée");
+        }
+    }
+
+    }

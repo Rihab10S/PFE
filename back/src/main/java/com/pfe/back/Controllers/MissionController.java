@@ -71,4 +71,9 @@ public class MissionController {
         missionService.deleteMission(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    @PutMapping("/{id}/valider")
+    public ResponseEntity<String> validerMission(@PathVariable Long id) {
+        missionService.validerMission(id);
+        return ResponseEntity.ok("Mission validée avec succès !");
+    }
 }
