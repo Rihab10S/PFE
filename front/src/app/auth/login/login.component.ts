@@ -1,29 +1,37 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { AuthService } from '../auth.service';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
+  standalone: true,
   selector: 'app-login',
-  imports: [],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
+  imports: [CommonModule, FormsModule]
 })
 export class LoginComponent {
   username = '';
   password = '';
   errorMessage = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  // Utilisateur simulé (à remplacer par vos propres valeurs si nécessaire)
+  predefinedUser = { username: 'testuser', password: 'password123' };
+
+  constructor(private router: Router) {}
 
   onLogin() {
-    this.authService.login(this.username, this.password).subscribe({
-      next: (res) => {
-        localStorage.setItem('token', res.token);
-        this.router.navigate(['/home']);
-      },
-      error: () => {
-        this.errorMessage = 'Nom d’utilisateur ou mot de passe incorrect.';
-      }
-    });
+    console.log('Login button clicked');
+    
+    // Vérification des informations d'identification
+    if (this.username === this.predefinedUser.username && this.password === this.predefinedUser.password) {
+      // Si les identifiants sont corrects, on navigue vers la page d'accueil
+      console.log('Login successful');
+      this.router.navigate(['/home']);
+    } else {
+      // Sinon, on affiche un message d'erreur
+      console.error('Invalid credentials');
+      this.errorMessage = 'Nom d’utilisateur ou mot de passe incorrect.';
+    }
   }
 }

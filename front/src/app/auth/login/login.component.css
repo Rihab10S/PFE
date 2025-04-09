@@ -1,0 +1,116 @@
+/* Container principal pour la page de connexion */
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #f2f4f7;  /* Couleur neutre mais apaisante */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+    background-size: cover;
+    background-position: center;
+  }
+  
+  /* Titre du formulaire */
+  .login-container h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #2c3e50;  /* Couleur sophistiquée pour le texte */
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-transform: uppercase;
+  }
+  
+  /* Label des champs */
+  .login-container label {
+    font-size: 14px;
+    color: #34495e;
+    text-align: left;
+    display: block;
+    margin: 10px 0 5px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 600;
+  }
+  
+  /* Champs de saisie (input) */
+  .login-container input[type="text"],
+  .login-container input[type="password"] {
+    width: 90%;
+    padding: 12px;
+    margin: 8px 0 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #ffffff;
+    transition: border-color 0.3s ease;
+  }
+  
+  /* Ajout d'une couleur spécifique au focus sur les champs */
+  .login-container input[type="text"]:focus,
+  .login-container input[type="password"]:focus {
+    border-color: #16a085;  /* Couleur inspirée du vert qui symbolise la santé */
+    outline: none;
+  }
+  
+  
+  /* Bouton de soumission */
+  .login-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: #b94343;  /* Vert marocain spécifique pour la santé */
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+  }
+  
+  /* Couleur du bouton au survol */
+  .login-container button:hover {
+    background-color: #740909;  /* Un ton plus clair pour un effet visuel de survol */
+  }
+  
+  /* Message d'erreur */
+  .login-container p {
+    font-size: 14px;
+    color: red;
+    margin-top: 10px;
+    font-family: 'Arial', sans-serif;
+    font-weight: 600;
+  }
+  
+  /* Image du logo de l'entreprise */
+  .login-container::before {
+    content: "";
+    display: block;
+    background-image: url('../../images/logo_mhs.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 50px;
+    margin-bottom: 20px;
+    margin-top: -20px;  /* Positionner l'image juste avant le titre */
+  }
+  
+  /* Mobile - Adaptation pour petits écrans */
+  @media (max-width: 600px) {
+    .login-container {
+      padding: 15px;
+      margin: 20px;
+    }
+    
+    .login-container h2 {
+      font-size: 22px;
+    }
+    
+    .login-container input[type="text"],
+    .login-container input[type="password"],
+    .login-container button {
+      font-size: 14px;
+    }
+  }
+  

@@ -1,19 +1,14 @@
-// src/app/auth/auth.module.ts
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';  // Required for *ngIf
-import { FormsModule } from '@angular/forms';   // Required for ngModel and ngForm
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 
 @NgModule({
-  declarations: [
-    LoginComponent,
-  ],
+  declarations: [LoginComponent],
   imports: [
-    CommonModule,  // Required for *ngIf
-    FormsModule,   // Required for ngModel and ngForm
+    CommonModule,
+    FormsModule
   ],
-  exports: [
-    LoginComponent,  // Export LoginComponent if you plan to use it outside this module
-  ],
+  exports: [LoginComponent]
 })
 export class AuthModule {}
