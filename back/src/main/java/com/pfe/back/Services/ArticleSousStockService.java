@@ -15,8 +15,6 @@ import com.pfe.back.entities.ArticleSousStock;
 @Service
 public class ArticleSousStockService {
 
-    
-
     @Autowired
     private ArticleRepository articleRepository;
 
@@ -27,18 +25,17 @@ public class ArticleSousStockService {
     private ArticleSousStockRepository articleSousStockRepository;
 
     public ArticleSousStock createArticleSousStock(ArticleSousStock articleSousStock) {
-        // Sauvegarde de l'article dans la base de données
+        // Enregistre l'article dans la base de données
         return articleSousStockRepository.save(articleSousStock);
     }
-    
-    
+
     public Article saveArticle(Article article) {
         return articleRepository.save(article);
     }
 
     // Obtenir tous les articles dans un sous-stock spécifique
-    public List<ArticleSousStock> getArticlesBySubStock(Long subStockId) {
-        return articleSousStockRepository.findBySubStockId(subStockId);
+    public List<ArticleSousStock> getArticlesBySousStock(Long sousStockId) {
+        return articleSousStockRepository.findBySousStockId(sousStockId);
     }
 
     public ArticleSousStock updateArticleSousStock(Long id, ArticleSousStock updatedArticle) {
@@ -46,7 +43,7 @@ public class ArticleSousStockService {
         Optional<ArticleSousStock> articleOptional = articleSousStockRepository.findById(id);
     
         if (!articleOptional.isPresent()) {
-            throw new RuntimeException("Article not found with id: " + id);
+            throw new RuntimeException("Article non trouvé avec l'ID: " + id);
         }
     
         ArticleSousStock article = articleOptional.get();
@@ -59,7 +56,7 @@ public class ArticleSousStockService {
         article.setDateExpiration(updatedArticle.getDateExpiration());
         article.setReference(updatedArticle.getReference());
         article.setFournisseur(updatedArticle.getFournisseur());
-        article.setSubStock(updatedArticle.getSubStock());  // Si tu veux aussi mettre à jour le sous-stock, sinon laisse-le comme il est.
+        article.setSousStockId(updatedArticle.getSousStockId());  // Si tu veux aussi mettre à jour le sous-stock, sinon laisse-le comme il est.
     
         // Sauvegarder l'article mis à jour dans la base de données
         return articleSousStockRepository.save(article);
@@ -76,5 +73,4 @@ public class ArticleSousStockService {
             throw new RuntimeException("ArticleSousStock non trouvé");
         }
     }
-    
 }

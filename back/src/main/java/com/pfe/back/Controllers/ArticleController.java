@@ -73,22 +73,26 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.saveArticle(article));
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Article> updateArticle(@PathVariable Long id, @RequestBody Article newArticle) {
-        return articleService.getArticleById(id)
-                .map(article -> {
-                    article.setNom(newArticle.getNom());
-                    article.setDescription(newArticle.getDescription());
-                    article.setQuantiteDisponible(newArticle.getQuantiteDisponible());
-                    article.setPrixUnitaire(newArticle.getPrixUnitaire());
-                    article.setDateExpiration(newArticle.getDateExpiration());
-                    article.setStockPrincipal(newArticle.getStockPrincipal());
-                    article.setSubStock(newArticle.getSubStock());
-                    return ResponseEntity.ok(articleService.saveArticle(article));
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+   @PutMapping("/{id}")
+@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+public ResponseEntity<Article> updateArticle(@PathVariable Long id, @RequestBody Article newArticle) {
+    return articleService.getArticleById(id)
+            .map(article -> {
+                // Mettre à jour tous les champs pertinents
+                article.setNom(newArticle.getNom());
+                article.setDescription(newArticle.getDescription());
+                article.setQuantiteDisponible(newArticle.getQuantiteDisponible());
+                article.setPrixUnitaire(newArticle.getPrixUnitaire());
+                article.setDateExpiration(newArticle.getDateExpiration());
+                article.setStockPrincipal(newArticle.getStockPrincipal());
+                article.setSubStock(newArticle.getSubStock());
+                article.setReference(newArticle.getReference()); // Mise à jour du champ référence
+                article.setFournisseur(newArticle.getFournisseur()); // Mise à jour du champ fournisseur
+                return ResponseEntity.ok(articleService.saveArticle(article));
+            })
+            .orElseGet(() -> ResponseEntity.notFound().build());
+}
+
        
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -173,83 +177,84 @@ public class ArticleController {
         return new ResponseEntity<>(excelFile, responseHeaders, HttpStatus.OK);
     }
     @PostMapping("/import")
-@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-public ResponseEntity<String> importArticlesFromExcel(@RequestParam("file") MultipartFile file) throws IOException {
-    if (file.isEmpty()) {
-        return ResponseEntity.badRequest().body("Aucun fichier sélectionné");
-    }
-
-    Workbook workbook = new XSSFWorkbook(file.getInputStream());
-    Sheet sheet = workbook.getSheetAt(0);
-    Iterator<Row> rowIterator = sheet.iterator();
-
-    if (rowIterator.hasNext()) {
-        rowIterator.next(); // Ignorer l'en-tête
-    }
-
-    while (rowIterator.hasNext()) {
-        Row row = rowIterator.next();
-
-        // Vérifier si la ligne est vide
-        if (row.getCell(0) == null || row.getCell(1) == null || row.getCell(2) == null) {
-            continue;
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<String> importArticlesFromExcel(@RequestParam("file") MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("Aucun fichier sélectionné");
         }
 
-        String nom = getCellStringValue(row.getCell(0));
-        String description = getCellStringValue(row.getCell(1));
+        Workbook workbook = new XSSFWorkbook(file.getInputStream());
+        Sheet sheet = workbook.getSheetAt(0);
+        Iterator<Row> rowIterator = sheet.iterator();
+        int importedCount = 0;
+        int ignoredCount = 0;
 
-        int quantiteDisponible = getCellNumericValue(row.getCell(2), 0);
-        Double prixUnitaire = getCellNumericValue(row.getCell(3), 0.0);
-        Date dateExpiration = getCellDateValue(row.getCell(4));
-        String reference = getCellStringValue(row.getCell(5));
-        String fournisseur = getCellStringValue(row.getCell(6));
-
-        String stockPrincipalStr = getCellStringValue(row.getCell(7));
-        String sousStockStr = getCellStringValue(row.getCell(8));
-
-        // Traitement spécial pour "principal" -> 1
-        Integer stockPrincipalId = null;
-        if (!stockPrincipalStr.isEmpty()) {
-            if ("principal".equalsIgnoreCase(stockPrincipalStr.trim())) {
-                stockPrincipalId = 1; // Remplacer "principal" par 1
-            } else {
-                stockPrincipalId = tryParseInt(stockPrincipalStr); // Tenter une conversion en entier
-            }
+        if (rowIterator.hasNext()) {
+            rowIterator.next(); // Ignorer l'en-tête
         }
 
-        // === Nouveau traitement du sous-stock ===
-        SubStock subStock = null;
-        if (!sousStockStr.isEmpty() && !"N/A".equalsIgnoreCase(sousStockStr)) {
-            subStock = subStockService.getSubStockByNom(sousStockStr);
-            if (subStock == null) {
-                continue; // Si sous-stock introuvable, ignorer la ligne (ou tu peux lever une exception)
+        while (rowIterator.hasNext()) {
+            Row row = rowIterator.next();
+
+            // Vérification des valeurs de la ligne
+            if (row.getCell(0) == null || row.getCell(1) == null || row.getCell(2) == null) {
+                continue;
             }
 
+            String nom = getCellStringValue(row.getCell(0));
+            String description = getCellStringValue(row.getCell(1));
+            int quantiteDisponible = getCellNumericValue(row.getCell(2), 0);
+            Double prixUnitaire = getCellNumericValue(row.getCell(3), 0.0);
+            Date dateExpiration = getCellDateValue(row.getCell(4));
+            String reference = getCellStringValue(row.getCell(5));
+            String fournisseur = getCellStringValue(row.getCell(6));
+            String stockPrincipalStr = getCellStringValue(row.getCell(7));
+            String sousStockStr = getCellStringValue(row.getCell(8));
+
+            // Traitement spécial pour "principal"
+            Integer stockPrincipalId = null;
+            if (!stockPrincipalStr.isEmpty()) {
+                if ("principal".equalsIgnoreCase(stockPrincipalStr.trim())) {
+                    stockPrincipalId = 1; // Remplacer "principal" par 1
+                } else {
+                    stockPrincipalId = tryParseInt(stockPrincipalStr);
+                }
+            }
+
+            // Nouveau traitement du sous-stock
+            SubStock subStock = null;
+            if (!sousStockStr.isEmpty() && !"N/A".equalsIgnoreCase(sousStockStr)) {
+                subStock = subStockService.getSubStockByNom(sousStockStr);
+                if (subStock == null) {
+                    continue;
+                }
+            }
+
+            StockPrincipal stockPrincipal = (stockPrincipalId != null) ? 
+                stockPrincipalService.getStockPrincipalById(stockPrincipalId.longValue()).orElse(null) : null;
+
+            // Vérification des données obligatoires
+            if (nom.isEmpty() || description.isEmpty()) {
+                continue;
+            }
+
+            // Vérification si l'article existe déjà
+            if (articleService.existsByReference(reference)) {
+                ignoredCount++; // Compter les articles ignorés
+                continue;
+            }
+
+            // Création de l'article et enregistrement
+            Article article = new Article(nom, description, prixUnitaire, quantiteDisponible, dateExpiration, reference, fournisseur, stockPrincipal, subStock);
+            articleService.saveArticle(article);
+            importedCount++; // Compter les articles importés
         }
 
-        StockPrincipal stockPrincipal = (stockPrincipalId != null) ?
-            stockPrincipalService.getStockPrincipalById(stockPrincipalId.longValue()).orElse(null) : null;
-
-        // Vérification des données obligatoires
-        if (nom.isEmpty() || description.isEmpty()) {
-            continue;
-        }
-
-        // Vérifier si l'article existe déjà dans la base de données
-        if (articleService.existsByReference(reference)) {
-            continue;
-        }
-
-        // Création de l'article avec gestion des relations
-        Article article = new Article(nom, description, prixUnitaire, quantiteDisponible, dateExpiration, reference, fournisseur, stockPrincipal, subStock);
-
-        // Enregistrer l'article dans la base de données
-        articleService.saveArticle(article);
+        workbook.close();
+        String resultMessage = String.format("Importation réussie : %d articles importés, %d articles ignorés.", importedCount, ignoredCount);
+        return ResponseEntity.ok(resultMessage);
     }
 
-    workbook.close();
-    return ResponseEntity.ok("Importation réussie");
-}
 
 // Méthode pour convertir une chaîne en Integer
 private Integer tryParseInt(String value) {

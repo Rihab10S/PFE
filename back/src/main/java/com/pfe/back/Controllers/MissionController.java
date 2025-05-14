@@ -36,6 +36,12 @@ public class MissionController {
     public List<Mission> getAllMissions() {
         return missionService.getAllMissions();
     }
+    // Afficher les missions par numéro de sous-stock
+    @GetMapping("/substock/{numeroSousStock}")
+    public List<Mission> getMissionsBySousStock(@PathVariable("numeroSousStock") Long numeroSousStock) {
+        return missionService.getMissionsBySousStock(numeroSousStock);
+    }
+
 
     // Afficher une mission par ID
     @GetMapping("/{id}")
@@ -43,7 +49,7 @@ public class MissionController {
         Mission mission = missionService.getMissionById(id);
         return new ResponseEntity<>(mission, HttpStatus.OK);
     }
-    // Afficher une mission par Nom du Technicien
+    // Afficher une mission par username du Technicien
     @GetMapping("/technicien/{nomTechnicien}")
     public ResponseEntity<Mission> getMissionByNomTechnicien(@PathVariable String nomTechnicien) {
         Mission mission = missionService.getMissionByNomTech(nomTechnicien);
@@ -52,7 +58,7 @@ public class MissionController {
         if (mission != null) {
             return new ResponseEntity<>(mission, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Retourner 404 si aucune mission n'est trouvée
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
         }
     }
 

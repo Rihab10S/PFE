@@ -35,6 +35,10 @@ public class MissionService {
     public List<Mission> getAllMissions() {
         return missionRepository.findAll();
     }
+    // Récupérer les missions par numéro de sous-stock
+    public List<Mission> getMissionsBySousStock(Long numeroSousStock) {
+        return missionRepository.findBySousStockId(numeroSousStock);
+    }
 
     public Mission getMissionByNomTech(String nomTech) {
         // Recherche de la mission par nom de technicien

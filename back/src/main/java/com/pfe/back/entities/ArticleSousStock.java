@@ -3,14 +3,12 @@ package com.pfe.back.entities;
 import java.sql.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 
 @Entity
 public class ArticleSousStock {
@@ -21,9 +19,10 @@ public class ArticleSousStock {
 
     private String nom;
     private String description;
-    private int quantiteDisponibleSousStock; // Quantité dans le sous-stock
+    private int quantiteDisponibleSousStock; 
 
     private double prixUnitaire;
+    private Long sousStockId;
 
     @Column(name = "date_expiration")
     @JsonFormat(pattern = "dd/MM/yyyy")
@@ -36,11 +35,8 @@ public class ArticleSousStock {
     @Column(name = "fournisseur")
     private String fournisseur;
 
-    
+   
 
-    @ManyToOne
-    @JsonIgnore 
-    private SubStock subStock;
 
     // Getters and Setters
 
@@ -110,11 +106,14 @@ public class ArticleSousStock {
         this.fournisseur = fournisseur;
     }
 
-    public SubStock getSubStock() {
-        return subStock;
+
+  
+
+    public Long getSousStockId() {
+        return sousStockId;
     }
 
-    public void setSubStock(SubStock subStock) {
-        this.subStock = subStock;
+    public void setSousStockId(Long sousStockId) {
+        this.sousStockId = sousStockId;
     }
 }

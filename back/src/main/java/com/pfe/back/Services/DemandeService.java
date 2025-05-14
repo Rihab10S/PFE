@@ -1,6 +1,7 @@
 package com.pfe.back.Services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,10 @@ public class DemandeService {
     // 🔹 Afficher toutes les demandes
     public List<Demande> getAllDemandes() {
         return demandeRepository.findAll();
+    }
+     // Récupérer une demande par ID
+    public Optional<Demande> getDemandeById(Long id) {
+        return demandeRepository.findById(id);
     }
 
     // 🔹 Modifier une demande

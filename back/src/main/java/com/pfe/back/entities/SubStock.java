@@ -4,9 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,9 +30,7 @@ public class SubStock {
     private StockPrincipal stockPrincipal;// Relation avec StockPrincipal
 
 
-    @OneToMany(mappedBy = "subStock", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JsonIgnore 
-    private List<ArticleSousStock> articleSousStocks;
+   
 
 
 
@@ -89,12 +85,6 @@ public class SubStock {
         this.articles = articles;
     }
 
-    public List<ArticleSousStock> getArticleSousStocks() {
-        return articleSousStocks;
-    }
-
-    public void setArticleSousStocks(List<ArticleSousStock> articleSousStocks) {
-        this.articleSousStocks = articleSousStocks;
-    }
+    
 
 }

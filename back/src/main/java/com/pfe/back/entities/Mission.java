@@ -23,6 +23,7 @@ public class Mission {
     private LocalDate date;
     private String lieu;
     private String statut;
+    private Long sousStockId;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 
@@ -88,4 +89,14 @@ public class Mission {
     public void setArticles(List<ArticleMission> articles) {
         this.articles = articles;
     }
+
+    public Long getSousStockId() {
+        return sousStockId;
+    }
+
+    public void setSousStockId(Long sousStockId) {
+        this.sousStockId = sousStockId;
+    }
+
+    
 }

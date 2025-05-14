@@ -27,7 +27,9 @@ public class AuthController {
         try {
             
             String token = authService.register(user.getUsername(), user.getPassword());
-            return ResponseEntity.status(HttpStatus.CREATED).body("Utilisateur créé avec succès. Token : " + token);
+            return ResponseEntity.status(HttpStatus.CREATED)
+            .body("{\"token\":\"" + token + "\"}");
+
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

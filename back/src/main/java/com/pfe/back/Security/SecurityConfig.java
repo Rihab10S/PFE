@@ -19,20 +19,7 @@ public class SecurityConfig {
         this.jwtRequestFilter = jwtRequestFilter;
     }
 
-    // Méthode de configuration des CORS
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:4200") 
-                        .allowedMethods("GET", "POST", "PUT", "DELETE") // Spécifiez les méthodes autorisées
-                        .allowedHeaders("*") // Autoriser tous les en-têtes
-                        .allowCredentials(true); // Autoriser les informations d'identification (cookies, autorisations)
-            }
-        };
-    }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
