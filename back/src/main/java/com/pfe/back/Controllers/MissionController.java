@@ -25,7 +25,7 @@ public class MissionController {
     private MissionService missionService;
 
     // Créer une mission
-    @PostMapping
+   @PostMapping
     public ResponseEntity<Mission> createMission(@RequestBody Mission mission) {
         Mission createdMission = missionService.createMission(mission);
         return new ResponseEntity<>(createdMission, HttpStatus.CREATED);

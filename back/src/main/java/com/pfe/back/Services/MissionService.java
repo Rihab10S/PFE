@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.pfe.back.Repositories.ArticleRepository;
 import com.pfe.back.Repositories.ArticleSousStockRepository;
 import com.pfe.back.Repositories.MissionRepository;
-import com.pfe.back.entities.Article;
 import com.pfe.back.entities.ArticleMission;
 import com.pfe.back.entities.ArticleSousStock;
 import com.pfe.back.entities.Mission;
@@ -25,11 +24,32 @@ public class MissionService {
     @Autowired
     private ArticleRepository articleRepository;
 
-    // Créer une mission avec des articles
-    @Transactional
-    public Mission createMission(Mission mission) {
-        return missionRepository.save(mission);
-    }
+        // Créer une mission avec des articles
+            @Transactional
+            public Mission createMission(Mission mission) {
+                // Parcourir les articles de la mission
+                for (ArticleMission articleMission : mission.getArticles()) {
+                    Long articleId = articleMission.getArticle().getId();
+
+                    // Charger l'article depuis la base de données
+                    ArticleSousStock article = articleSousStockRepository.findById(articleId)
+                            .orElseThrow(() -> new RuntimeException("Article non trouvé avec l'ID : " + articleId));
+
+                    // Vérifier la quantité demandée
+                    if (articleMission.getQuantite() <= 0) {
+                        throw new RuntimeException("La quantité demandée pour l'article " + article.getNom() + " est invalide.");
+                    }
+
+                    // Associer l'article récupéré à ArticleMission
+                    articleMission.setArticle(article);
+                }
+
+                // Enregistrer et retourner la mission
+                return missionRepository.save(mission);
+            }
+
+
+
 
     // Afficher toutes les missions
     public List<Mission> getAllMissions() {
@@ -47,10 +67,18 @@ public class MissionService {
     
 
     // Afficher une mission par ID
-    public Mission getMissionById(Long id) {
-        return missionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Mission non trouvée"));
-    }
+  @Transactional
+        public Mission getMissionById(Long id) {
+            Mission mission = missionRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Mission non trouvée"));
+
+            // Forcer le chargement des articles (si en Lazy)
+            mission.getArticles().forEach(articleMission -> {
+                articleMission.getArticle().getNom(); // Accès pour charger l'entité
+            });
+
+            return mission;
+        }
 
     // Modifier une mission
     @Transactional
@@ -81,7 +109,7 @@ public class MissionService {
 
             // Parcourir les articles liés à la mission
             for (ArticleMission articleMission : mission.getArticles()) {
-                Article article = articleMission.getArticle();
+                ArticleSousStock article = articleMission.getArticle();
 
                 // Chercher l'articleSousStock correspondant (par id)
                 ArticleSousStock sousStock = articleSousStockRepository

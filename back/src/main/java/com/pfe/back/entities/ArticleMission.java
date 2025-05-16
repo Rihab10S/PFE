@@ -14,8 +14,8 @@ public class ArticleMission {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "article_id")
-    private Article article;  // L'article associé à la mission
+    @JoinColumn(name = "article_sous_stock_id")
+    private ArticleSousStock article;  // L'article associé à la mission
 
     private int quantite; // La quantité de cet article pour la mission
 
@@ -29,11 +29,11 @@ public class ArticleMission {
         this.id = id;
     }
 
-    public Article getArticle() {
+    public ArticleSousStock getArticle() {
         return article;
     }
 
-    public void setArticle(Article article) {
+    public void setArticle(ArticleSousStock article) {
         this.article = article;
     }
 
