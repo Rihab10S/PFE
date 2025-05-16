@@ -1,0 +1,12 @@
+package com.pfe.back.entities;
+
+public enum Erole {
+    ROLE_ADMIN,
+    ROLE_MAGASINIER,
+    ROLE_INGENIEUR,
+    ROLE_TECHNICIEN,
+    ROLE_SERVICECOMPTABLE,
+    ROLE_FOURNISSEUR,
+    ROLE_RESPONSABLE_ACHAT,
+    ROLE_USER
+}
