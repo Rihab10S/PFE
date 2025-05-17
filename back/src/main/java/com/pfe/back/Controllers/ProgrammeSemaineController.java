@@ -33,6 +33,15 @@ public class ProgrammeSemaineController {
     public ResponseEntity<List<ProgrammeSemaine>> getAllProgrammes() {
         return ResponseEntity.ok(service.getAllProgrammes());
     }
+    @GetMapping("/sousstock/{sousStockId}")
+        public ResponseEntity<List<ProgrammeSemaine>> getProgrammesBySousStockId(@PathVariable Long sousStockId) {
+            List<ProgrammeSemaine> programmes = service.getProgrammesBySousStockId(sousStockId);
+            if (programmes.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(programmes);
+        }
+
     @GetMapping("/{id}")
     public ResponseEntity<ProgrammeSemaine> getProgrammeById(@PathVariable Long id) {
         ProgrammeSemaine programme = service.getProgrammeById(id);

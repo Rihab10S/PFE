@@ -3,6 +3,7 @@ package com.pfe.back.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -28,6 +29,10 @@ public class User {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+        @Column(name = "sous_stock")
+        private long sousStock;
+
+    
 
     // Constructeur par défaut
     public User() {
@@ -70,5 +75,12 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+    public long getSousStock() {
+        return sousStock;
+    }
+
+    public void setSousStock(long sousStock) {
+        this.sousStock = sousStock;
     }
 }

@@ -61,7 +61,8 @@ public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest signU
         String token = authService.register(
             signUpRequest.getUsername(),
             signUpRequest.getPassword(),
-            signUpRequest.getRoles()
+            signUpRequest.getRoles(),
+             signUpRequest.getSousStock() 
         );
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("{\"token\":\"" + token + "\"}");
@@ -99,9 +100,17 @@ public ResponseEntity<?> signIn(@RequestBody AuthenticationRequest authRequest) 
 
         // Prépare la réponse JSON avec token, username et roles
         Map<String, Object> response = new HashMap<>();
-        response.put("token", jwt);
-        response.put("username", user.getUsername());
-        response.put("roles", roles);
+            response.put("id", user.getId());
+            response.put("token", jwt);
+            response.put("username", user.getUsername());
+            response.put("roles", roles);  // ou user.getRoles()
+
+        // Vérifier si l'utilisateur a un rôle technicien ou ingénieur
+       
+       
+       
+           response.put("sousStockId", user.getSousStock());
+
 
         return ResponseEntity.ok(response);
 
@@ -111,5 +120,4 @@ public ResponseEntity<?> signIn(@RequestBody AuthenticationRequest authRequest) 
         e.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur serveur.");
     }
-}
-}
+}}

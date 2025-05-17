@@ -6,6 +6,7 @@ public class UserRegistrationRequest {
     private String username;
     private String password;
     private Set<String> roles; 
+   private Long sousStock;
 
     // Getters
     public String getUsername() {
@@ -32,4 +33,13 @@ public class UserRegistrationRequest {
     public void setRoles(Set<String> roles) {
         this.roles = roles;
     }
+
+public Long getSousStock() {
+    return sousStock;
+}
+public void setSousStock(Long sousStock) {
+    this.sousStock = sousStock;
+}
+
+    
 }

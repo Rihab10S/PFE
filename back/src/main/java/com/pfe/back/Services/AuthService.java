@@ -11,10 +11,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.pfe.back.Repositories.RoleRepository;
+import com.pfe.back.Repositories.SubStockRepository;
 import com.pfe.back.Repositories.UserRepository;
+import com.pfe.back.Requests.UserRegistrationRequest;
 import com.pfe.back.Security.JwtUtil;
 import com.pfe.back.entities.Erole;
 import com.pfe.back.entities.Role;
+import com.pfe.back.entities.SubStock;
 import com.pfe.back.entities.User;
 
 @Service
@@ -23,15 +26,17 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+    private final SubStockRepository sousStockRepository;
 
-    public AuthService(UserRepository userRepository, RoleRepository roleRepository, JwtUtil jwtUtil,PasswordEncoder passwordEncoder) {
+    public AuthService(SubStockRepository sousStockRepository,UserRepository userRepository, RoleRepository roleRepository, JwtUtil jwtUtil,PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.jwtUtil = jwtUtil;
          this.passwordEncoder = passwordEncoder;
+          this.sousStockRepository = sousStockRepository;
     }
 
-    public String register(String username, String password, Set<String> strRoles) {
+    public String register(String username, String password, Set<String> strRoles , Long sousStockId) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new UserAlreadyExistsException("User already exists!");
         }
@@ -90,7 +95,23 @@ public class AuthService {
         }
 
         user.setRoles(roles);
-        userRepository.save(user);
+            // Gérer le sous-stock uniquement pour technicien ou ingénieur
+                boolean isTechOrIng = roles.stream().anyMatch(role ->
+                        role.getName().equals(Erole.ROLE_TECHNICIEN) || role.getName().equals(Erole.ROLE_INGENIEUR)
+                );
+
+                if (isTechOrIng) {
+                    if (sousStockId != null) {
+                       user.setSousStock(sousStockId != null ? sousStockId : 0L);
+
+                    } else {
+                        user.setSousStock(1L); // valeur par défaut
+                    }
+                } else {
+                    user.setSousStock(0L); // ou -1 si non concerné
+                }
+
+                userRepository.save(user);
 
         return jwtUtil.generateToken(username);
     }

@@ -22,6 +22,7 @@ public class ProgrammeSemaine {
     private LocalDate date;
 
     private String statut;
+     private Long sousStockId;
 
     // Getters et Setters
 
@@ -65,5 +66,13 @@ public class ProgrammeSemaine {
 
     public void setMission(String mission) {
         this.mission = mission;
+    }
+
+    public Long getSousStockId() {
+        return sousStockId;
+    }
+
+    public void setSousStockId(Long sousStockId) {
+        this.sousStockId = sousStockId;
     }
 }

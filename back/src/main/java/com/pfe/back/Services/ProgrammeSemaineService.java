@@ -32,9 +32,14 @@ public class ProgrammeSemaineService {
             p.setNomTech(updatedProgramme.getNomTech());
             p.setDate(updatedProgramme.getDate());
             p.setStatut(updatedProgramme.getStatut());
+              p.setSousStockId(updatedProgramme.getSousStockId());
             return repository.save(p);
         }).orElseThrow(() -> new RuntimeException("Programme non trouvé"));
     }
+
+    public List<ProgrammeSemaine> getProgrammesBySousStockId(Long sousStockId) {
+    return repository.findBySousStockId(sousStockId);
+}
 
     public void deleteProgramme(Long id) {
         repository.deleteById(id);
